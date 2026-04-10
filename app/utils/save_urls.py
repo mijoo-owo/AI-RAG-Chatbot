@@ -13,7 +13,8 @@ from .prepare_vectordb import ensure_user_dirs, get_user_dirs
 # Add a global variable to track first scan
 first_scan_done = False
 
-def save_url_to_vectordb_user(
+# This function is similar to save_url_to_vectordb but saves to a user-specific docs folder.
+def save_url_to_vectordb_user( 
         username: str,
         url: str,
         existing_docs: List[str],
