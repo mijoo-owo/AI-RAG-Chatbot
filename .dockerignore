@@ -1,0 +1,38 @@
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+
+# IDE and system files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Git and version control
+.git/
+.gitignore
+
+# Local data and model files
+data/
+draft*/
+/images/
+
+# Logs and temp files
+*.log
+tmp/
+*.tmp
+
+# Notebooks
+notebooks/
+*.ipynb
+
+# Others
+LICENSE
+README.md
+
+# Keep
