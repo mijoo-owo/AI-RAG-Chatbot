@@ -67,7 +67,7 @@ class ChatApp:
         # Header with user info and logout
         col1, col2 = st.columns([3, 1])
         with col1:
-            st.title(f"🤖 Chatbot")
+            st.title(f"🤖 RAG Chatbot")
             st.write(f"Welcome back, **{username}**!")
 
         with col2:

@@ -23,5 +23,5 @@ init_db()
 auth = UserAuth()
 auth.require_authentication()
 
-st.title("🏠 Homepage")
+st.title("🏠 Home")
 auth.render_logout_button(key="home_page_logout")
