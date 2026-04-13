@@ -15,7 +15,6 @@ import streamlit as st
 #         st.session_state.url_inputs = [""]
 
 
-def ensure_default_admin_user():
-    """Ensure development default user is initialized once in session state."""
-    if not st.session_state.get("username"):
-        st.session_state["username"] = "admin"
+def get_effective_kb_username(username: str) -> str:
+    """Map demo users to the shared knowledge base owner."""
+    return "admin" if username == "user" else username

@@ -9,6 +9,7 @@ except Exception as e:
 
 import streamlit as st
 
+from utils.auth import UserAuth
 from utils.db_orm import init_db
 
 
@@ -19,4 +20,8 @@ st.set_page_config(
 
 init_db()
 
+auth = UserAuth()
+auth.require_authentication()
+
 st.title("🏠 Homepage")
+auth.render_logout_button(key="home_page_logout")
