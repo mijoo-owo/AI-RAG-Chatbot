@@ -1,11 +1,11 @@
 import os
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import lru_cache
-from typing import List, Optional
+from typing import Optional
 
 from dotenv import load_dotenv
-from sqlalchemy import Boolean, DateTime, Float, String, create_engine, func
+from sqlalchemy import Boolean, DateTime, String, create_engine, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
@@ -16,23 +16,6 @@ load_dotenv()
 
 class Base(DeclarativeBase):
     pass
-
-
-class Incident(Base):
-    __tablename__ = "incidents"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[str] = mapped_column(String, nullable=False)
-    sla_no_of_hours: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
-    log: Mapped[Optional[str]] = mapped_column(String)
-    email: Mapped[str] = mapped_column(String(255), nullable=False)
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="open")  # "open" or "resolved"
-    notified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    solution: Mapped[Optional[str]] = mapped_column(String)
-    created_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=False, server_default=func.now())
-    # created_by: Mapped[Optional[str]] = mapped_column(String(255))
-    updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
 
 
 class ChatMessage(Base):
@@ -70,7 +53,7 @@ def _ensure_sqlite_dir(db_url: str) -> str:
 @lru_cache()
 def get_engine(connection_url: str = None) -> Engine:
     if connection_url is None:
-        default_path = os.path.join(os.getcwd(), "data", "incidents.db")
+        default_path = os.path.join(os.getcwd(), "data", "chat_history.db")
         os.makedirs(os.path.dirname(default_path), exist_ok=True)
         connection_url = os.getenv("DATABASE_URL", f"sqlite:///{default_path}")
 

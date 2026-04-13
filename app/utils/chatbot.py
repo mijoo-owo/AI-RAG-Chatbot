@@ -4,7 +4,6 @@ import re
 from typing import List
 
 import streamlit as st
-from jinja2 import Template
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.messages import AIMessage, HumanMessage
@@ -14,7 +13,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from streamlit_carousel import carousel
 
 from .db_crud import get_user_last_n_messages, log_chat_message
-from .db_orm import Incident
 
 
 def load_chat_history_from_db(username: str) -> List[dict]:
@@ -52,28 +50,6 @@ def chat_user_prompt(chat_history: List,
 
     return _chat_response_streaming(
         prompt=user_prompt,
-        chat_history=chat_history,
-        vectordb=vectordb,
-        username=username
-    )
-
-
-def chat_incident_prompt(incident: Incident,
-                         chat_history: List,
-                         vectordb,
-                         username: str) -> List:
-    template_str = os.getenv(
-        "INCIDENT_PROMPT_TEMPLATE",
-        (
-            "Incident Name: {{ incident.name }}\n\n"
-            "Description: {{ incident.description }}\n\n"
-            "Log: {{ incident.log }}"
-        )
-    )
-    template = Template(template_str)
-    prompt = template.render(incident=incident)
-    return _chat_response_streaming(
-        prompt=prompt,
         chat_history=chat_history,
         vectordb=vectordb,
         username=username

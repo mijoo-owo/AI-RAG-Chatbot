@@ -5,11 +5,9 @@ import streamlit as st
 
 from .auth import UserAuth
 from .chatbot import (
-    chat_incident_prompt,
     chat_user_prompt,
     load_chat_history_from_db,
 )
-from .db_crud import get_incident_by_id
 from .prepare_vectordb import (
     cleanup_user_data,
     get_user_dirs,
@@ -222,21 +220,6 @@ class ChatApp:
             loaded_chat_history = load_chat_history_from_db(username)
             # if chat_history_key not in st.session_state:
             st.session_state[chat_history_key] = loaded_chat_history
-
-            incident_request_key = "incident_prompt_request"
-            if incident_request_key in st.session_state:
-                incident_id = st.session_state[incident_request_key]
-                incident = get_incident_by_id(incident_id)
-                if incident:
-                    st.session_state[chat_history_key] = chat_incident_prompt(
-                        incident,
-                        st.session_state[chat_history_key],
-                        st.session_state[user_vectordb_key],
-                        username=username
-                    )
-                else:
-                    st.error("Incident not found.")
-                del st.session_state[incident_request_key]
 
             st.session_state[chat_history_key] = chat_user_prompt(
                 st.session_state[chat_history_key],

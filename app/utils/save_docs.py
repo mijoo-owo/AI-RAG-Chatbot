@@ -1,13 +1,9 @@
 import os
 import shutil
-from datetime import datetime, timezone
 
 import streamlit as st
-from jinja2 import Template
-from langchain.docstore.document import Document
 from spire.doc import Document as SpireDocument, FileFormat
 
-from .db_orm import Incident
 from .prepare_vectordb import (
     ensure_user_dirs, get_user_dirs,
     get_vectorstore_user,
@@ -132,53 +128,3 @@ def delete_user_document(username: str, filename: str):
 
     st.success(f"🗑️ Deleted {filename} for user {username}")
     return True
-
-
-def add_resolved_incident_to_vectordb(
-    username: str,
-    incident: Incident,
-) -> str:
-    """Add resolved incident details to user's vectorstore"""
-    _ = ensure_user_dirs(username)
-
-    template_str = os.getenv(
-        "RESOLVED_INCIDENT_TEMPLATE",
-        (
-            "Incident Name: {{ incident.name }}\n\n"
-            "Description: {{ incident.description }}\n\n"
-            "Solution: {{ incident.solution }}"
-        )
-    )
-    template = Template(template_str)
-    content = template.render(incident=incident)
-    incident_id = f"incident_{incident.id}"
-    doc = Document(
-        page_content=content,
-        metadata={
-            "source": incident_id,
-            "filename": incident_id,
-            "img_list": "",
-            "added_at": datetime.now(tz=timezone.utc).isoformat(),
-        }
-    )
-
-    vectordb = get_vectorstore_user(username)
-    vectordb.add_documents([doc], ids=[incident_id])
-    vectordb.persist()
-
-    st.success(f"✅ Added resolved incident '{incident.name}' to vectorstore for user: {username}")
-    return incident_id
-
-
-def delete_incident_from_vectordb(
-    username: str,
-    incident_id: str,
-) -> None:
-    """Delete incident document from user's vectorstore"""
-    vectordb = get_vectorstore_user(username)
-
-    if not incident_id.startswith("incident_"):
-        incident_id = f"incident_{incident_id}"
-
-    vectordb.delete(ids=[incident_id])
-    vectordb.persist()
